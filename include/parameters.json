@@ -1,0 +1,12 @@
+{
+    "thermal_parms": [
+        {
+            "name" : "max_temp",
+            "value" : 100.0
+        },
+        {
+            "name" : "min_temp",
+            "value" : -0.0
+        }
+    ]
+}
