@@ -159,16 +159,19 @@ void Camera::set_camera(){
 }
 
 
-cv::Mat Camera::acquire_image(double & time){
+cv::Mat Camera::acquire_image(double & time, bool & image_ok){
 
     cv::Mat image;
     if(camera_ready){
         Spinnaker::ImagePtr img = camptr->GetNextImage();
+        image_ok = true;
 
         if(img->IsIncomplete()) {
             std::cout<<"Image Incomplete: "<<Spinnaker::Image::GetImageStatusDescription(img->GetImageStatus())<<std::endl;
+            image_ok = false;
             return image;
         } else {
+            image_ok = true;
             time = ros::Time::now().toSec();
             const size_t width = img->GetWidth();
             const size_t height = img->GetHeight();

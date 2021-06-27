@@ -110,10 +110,6 @@ int main(int argc, char ** argv) {
     bool ros_param_image_show;
     bool params_passed = nh.getParam("image_show", ros_param_image_show);    
 
-    // if(ros_param_image_show) {
-        // std::cout<<"No input parameters: Image is not shown [default]"<<std::endl;
-    // } else if(ros_param_image_show){
-
     if(!params_passed) {
         std::cout<<"Input should be either true or false"<<std::endl;
         std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image"<<std::endl;
@@ -130,16 +126,6 @@ int main(int argc, char ** argv) {
         }
     }
 
-    // } else {
-    //     std::cout<<"Wrong parameter input"<<std::endl;
-    //     std::cout<<"Input should be either true or false"<<std::endl;
-    //     std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image"<<std::endl;
-    //     std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image _image_show:=true"<<std::endl;
-    //     std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image _image_show:=false"<<std::endl;
-    //     return 0;
-    // }
-
-
     cv_bridge::CvImage img_bridge;
 
     sensor_msgs::Image img;
@@ -155,8 +141,9 @@ int main(int argc, char ** argv) {
 
     while(ros::ok()){
         double time;
-        cv::Mat acquired_image =  cam.acquire_image(time);
-        if(data_logging) {
+        bool image_ok;
+        cv::Mat acquired_image =  cam.acquire_image(time, image_ok);
+        if(data_logging && image_ok) {
             if(data_prefix.compare(stop_logging_msg)!=0) {
                 char timestamp_buf[256];
                 sprintf(timestamp_buf, "%06d\t%f\n", data_no, time);
@@ -210,7 +197,7 @@ int main(int argc, char ** argv) {
                 ++data_no;
             }
         }
-        if(image_show) {
+        if(image_show && image_ok) {
             cv::imshow("Infrared Image", acquired_image);
             cv::waitKey(1);
         }
