@@ -1,6 +1,5 @@
 #include "camera.h"
 
-
 Camera::Camera(float min_temp_, float max_temp_): min_temp(min_temp_), max_temp(max_temp_){
     system = Spinnaker::System::GetInstance();
     cam_serial = "73400300";
@@ -50,16 +49,16 @@ void Camera::set_camera(){
 
         if(!Spinnaker::GenApi::IsAvailable(node_pixel_format) ||
            !Spinnaker::GenApi::IsWritable(node_pixel_format)) {
-               std::cout<<"Unable to set pixel format, mate"<<std::endl;
+               std::cout<<"Unable to set pixel format"<<std::endl;
         } else {
             Spinnaker::GenApi::CEnumEntryPtr node_pixel_format_mono14 = 
                 Spinnaker::GenApi::CEnumEntryPtr(node_pixel_format->GetEntryByName("Mono14"));
             if(!Spinnaker::GenApi::IsAvailable(node_pixel_format_mono14) ||
                !Spinnaker::GenApi::IsReadable(node_pixel_format_mono14)) {
-                std::cout<<"Unable to set pixel format into mono14, mate"<<std::endl;            
+                std::cout<<"Unable to set pixel format into mono14"<<std::endl;            
             } else {
                 node_pixel_format->SetIntValue(node_pixel_format_mono14->GetValue());
-                std::cout<<"Pixel format is set to mono14, son"<<std::endl;
+                std::cout<<"Pixel format is set to mono14"<<std::endl;
             }
         }
 
@@ -67,16 +66,16 @@ void Camera::set_camera(){
             cam_nodemap.GetNode("TemperatureLinearResolution");
         if(!Spinnaker::GenApi::IsAvailable(node_temp_linear) ||
            !Spinnaker::GenApi::IsWritable(node_temp_linear)) {
-               std::cout<<"Unable to set temperature resolution, mate"<<std::endl;
+               std::cout<<"Unable to set temperature resolution"<<std::endl;
         } else {
             Spinnaker::GenApi::CEnumEntryPtr node_temp_linear_high = 
                 Spinnaker::GenApi::CEnumEntryPtr(node_temp_linear->GetEntryByName("High"));
             if(!Spinnaker::GenApi::IsAvailable(node_temp_linear_high) ||
                !Spinnaker::GenApi::IsReadable(node_temp_linear_high)) {
-                std::cout<<"Unable to set temperature resolution to high, mate"<<std::endl;            
+                std::cout<<"Unable to set temperature resolution to high"<<std::endl;            
             } else {
                 node_temp_linear->SetIntValue(node_temp_linear_high->GetValue());
-                std::cout<<"Temperature resolution set to high, son"<<std::endl;
+                std::cout<<"Temperature resolution set to high"<<std::endl;
 
             }
         }
@@ -85,16 +84,16 @@ void Camera::set_camera(){
             cam_nodemap.GetNode("CMOSBitDepth");
         if(!Spinnaker::GenApi::IsAvailable(node_bit_depth) ||
            !Spinnaker::GenApi::IsWritable(node_bit_depth)) {
-               std::cout<<"Unable to set CMOS bit depth, mate"<<std::endl;
+               std::cout<<"Unable to set CMOS bit depth"<<std::endl;
         } else {
             Spinnaker::GenApi::CEnumEntryPtr node_bit_depth_14bit = 
                 Spinnaker::GenApi::CEnumEntryPtr(node_bit_depth->GetEntryByName("bit14bit"));
             if(!Spinnaker::GenApi::IsAvailable(node_bit_depth_14bit) ||
                !Spinnaker::GenApi::IsReadable(node_bit_depth_14bit)) {
-                std::cout<<"Unable to set CMOS bit depth to 14bit, mate"<<std::endl;            
+                std::cout<<"Unable to set CMOS bit depth to 14bit"<<std::endl;            
             } else {
                 node_bit_depth->SetIntValue(node_bit_depth_14bit->GetValue());
-                std::cout<<"CMOS bit depth set to 14bit, son"<<std::endl;
+                std::cout<<"CMOS bit depth set to 14bit"<<std::endl;
             }
         }
 
@@ -102,16 +101,16 @@ void Camera::set_camera(){
             cam_nodemap.GetNode("TemperatureLinearMode");
         if(!Spinnaker::GenApi::IsAvailable(node_temp_linear_mode) ||
            !Spinnaker::GenApi::IsWritable(node_temp_linear_mode)) {
-               std::cout<<"Unable to set temperature linear mode, mate"<<std::endl;
+               std::cout<<"Unable to set temperature linear mode"<<std::endl;
         } else {
             Spinnaker::GenApi::CEnumEntryPtr node_temp_linear_mode_on = 
                 Spinnaker::GenApi::CEnumEntryPtr(node_temp_linear_mode->GetEntryByName("On"));
             if(!Spinnaker::GenApi::IsAvailable(node_temp_linear_mode_on) ||
                !Spinnaker::GenApi::IsReadable(node_temp_linear_mode_on)) {
-                std::cout<<"Unable to set temperature linear mode to on, mate"<<std::endl;            
+                std::cout<<"Unable to set temperature linear mode to on"<<std::endl;            
             } else {
                 node_temp_linear_mode->SetIntValue(node_temp_linear_mode_on->GetValue());
-                std::cout<<"Temperature linear mode is on, son"<<std::endl;
+                std::cout<<"Temperature linear mode is on"<<std::endl;
             }
         }
 
@@ -121,18 +120,35 @@ void Camera::set_camera(){
             sNodemap.GetNode("StreamBufferHandlingMode");
         if(!Spinnaker::GenApi::IsAvailable(node_bufferhandling_mode) ||
            !Spinnaker::GenApi::IsWritable(node_bufferhandling_mode)) {
-               std::cout<<"Unable to set buffer handling mode, mate"<<std::endl;
+               std::cout<<"Unable to set buffer handling mode"<<std::endl;
         } else {
             Spinnaker::GenApi::CEnumEntryPtr node_bufferhandling_mode_NewestOnly = 
                 Spinnaker::GenApi::CEnumEntryPtr(node_bufferhandling_mode->GetEntryByName("NewestOnly"));
             if(!Spinnaker::GenApi::IsAvailable(node_bufferhandling_mode_NewestOnly) ||
                !Spinnaker::GenApi::IsReadable(node_bufferhandling_mode_NewestOnly)) {
-                std::cout<<"Unable to set buffer handling mode to newest only, mate"<<std::endl;            
+                std::cout<<"Unable to set buffer handling mode to newest only"<<std::endl;            
             } else {
                 node_bufferhandling_mode->SetIntValue(node_bufferhandling_mode_NewestOnly->GetValue());
-                std::cout<<"Buffer handling mode set to newest only, son"<<std::endl;
+                std::cout<<"Buffer handling mode set to newest only"<<std::endl;
             }
         }            
+
+
+        Spinnaker::GenApi::CEnumerationPtr node_nuc_mode = cam_nodemap.GetNode("NUCMode");
+        if(!Spinnaker::GenApi::IsAvailable(node_nuc_mode) ||
+           !Spinnaker::GenApi::IsWritable(node_nuc_mode)) {
+               std::cout<<"Unable to set NUC mode"<<std::endl;
+        } else {
+            Spinnaker::GenApi::CEnumEntryPtr node_nuc_mode_Manual = 
+                Spinnaker::GenApi::CEnumEntryPtr(node_nuc_mode->GetEntryByName("Manual"));
+            if(!Spinnaker::GenApi::IsAvailable(node_nuc_mode_Manual) ||
+               !Spinnaker::GenApi::IsReadable(node_nuc_mode_Manual)) {
+                std::cout<<"Unable to set NUC mode to manual"<<std::endl;            
+            } else {
+                node_nuc_mode->SetIntValue(node_nuc_mode_Manual->GetValue());
+                std::cout<<"NUC mode set to manual"<<std::endl;
+            }
+        }         
 
         camptr->BeginAcquisition();
         camera_ready = true;
@@ -143,7 +159,7 @@ void Camera::set_camera(){
 }
 
 
-cv::Mat Camera::acquire_image(){
+cv::Mat Camera::acquire_image(double & time){
 
     cv::Mat image;
     if(camera_ready){
@@ -153,11 +169,12 @@ cv::Mat Camera::acquire_image(){
             std::cout<<"Image Incomplete: "<<Spinnaker::Image::GetImageStatusDescription(img->GetImageStatus())<<std::endl;
             return image;
         } else {
+            time = ros::Time::now().toSec();
             const size_t width = img->GetWidth();
             const size_t height = img->GetHeight();
             // std::cout<<width<<", "<<height<<std::endl;
             image = cv::Mat(cv::Size(width, height), CV_16UC1, img->GetData());
-            std::cout<<"before :"<<(image.at<u_int16_t>(width/2, height/2))*0.04 - 273.15<<std::endl;
+            // std::cout<<"before :"<<(image.at<u_int16_t>(width/2, height/2))*0.04 - 273.15<<std::endl;
 
             for(int i = 0; i < image.rows; ++i) {
                 for(int j = 0; j < image.cols; ++j) {
@@ -178,15 +195,15 @@ cv::Mat Camera::acquire_image(){
             }
 
 
-            std::cout<<"after :"<<float(image.at<u_int16_t>(width/2, height/2)/4)*cal_ratio + cal_bias<<std::endl;
+            // std::cout<<"after :"<<float(image.at<u_int16_t>(width/2, height/2)/4)*cal_ratio + cal_bias<<std::endl;
 
-            cv::imshow("Infrared", image);
-            cv::waitKey(1);
+            // cv::imshow("Infrared", image);
+            // cv::waitKey(1);
 
         }
     }
     else {
-        std::cout<<"Check the camera mate,"<<std::endl;
+        std::cout<<"Check the camera"<<std::endl;
     }
 
     return image;

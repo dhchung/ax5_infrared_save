@@ -10,7 +10,6 @@
 #include "camera.h"
 #include "parameters_json.h"
 
-#include <thread>
 #define PREFIX_PATH "/mnt/DataDisk/"
 
 //Time Check
@@ -19,8 +18,6 @@
 #include <sys/stat.h>
 // Threading
 #include <thread>
-
-#define PREFIX_PATH "/mnt/DataDisk/"
 
 Params params;
 
@@ -52,7 +49,7 @@ void dataLoggingFlagCallback(const std_msgs::Bool::ConstPtr &msg){
             data_logging = false;
             ROS_INFO("Data Logging Set False");
 
-            for(int i = 0; i < threads.size(); ++i) {
+            for(size_t i = 0; i < threads.size(); ++i) {
                 if(threads[i].joinable()) {
                     threads[i].join();
                 }
@@ -107,7 +104,41 @@ int main(int argc, char ** argv) {
     Camera cam(params.thermalParam.min_temp, params.thermalParam.max_temp);
 
     ros::init(argc, argv, "ifcamera_send_image");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
+
+    bool image_show = false;
+    bool ros_param_image_show;
+    bool params_passed = nh.getParam("image_show", ros_param_image_show);    
+
+    // if(ros_param_image_show) {
+        // std::cout<<"No input parameters: Image is not shown [default]"<<std::endl;
+    // } else if(ros_param_image_show){
+
+    if(!params_passed) {
+        std::cout<<"Input should be either true or false"<<std::endl;
+        std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image"<<std::endl;
+        std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image _image_show:=true"<<std::endl;
+        std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image _image_show:=false"<<std::endl;
+        std::cout<<"Image show is set to false by default"<<std::endl;
+    } else {
+        if(ros_param_image_show) {
+            std::cout<<"Image show is set to true"<<std::endl;
+            image_show = true;
+        } else {
+            std::cout<<"Image show is set to false"<<std::endl;
+            image_show = false;
+        }
+    }
+
+    // } else {
+    //     std::cout<<"Wrong parameter input"<<std::endl;
+    //     std::cout<<"Input should be either true or false"<<std::endl;
+    //     std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image"<<std::endl;
+    //     std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image _image_show:=true"<<std::endl;
+    //     std::cout<<"ex) $ rosrun ax5_infrared_save ifcamera_save_image _image_show:=false"<<std::endl;
+    //     return 0;
+    // }
+
 
     cv_bridge::CvImage img_bridge;
 
@@ -120,23 +151,15 @@ int main(int argc, char ** argv) {
     ros::Subscriber sub_prefix = nh.subscribe("/save_prefix", 1, dataPrefixCallBack);
 
     ros::Rate loop_rate(20);
-    int count = 0;
     int thread_num = 0;
 
     while(ros::ok()){
-
-        cv::Mat acquired_image =  cam.acquire_image();
-        // header.seq = count;
-        // header.stamp = ros::Time::now();
-        // img_bridge = cv_bridge::CvImage(header, sensor_msgs::image_encodings::MONO16, acquired_image);
-        // img_bridge.toImageMsg(img);
-
-        // pub_img.publish(img);
-
+        double time;
+        cv::Mat acquired_image =  cam.acquire_image(time);
         if(data_logging) {
             if(data_prefix.compare(stop_logging_msg)!=0) {
                 char timestamp_buf[256];
-                sprintf(timestamp_buf, "%06d\t%f\n", data_no, ros::Time::now().toSec());
+                sprintf(timestamp_buf, "%06d\t%f\n", data_no, time);
 
                 fwrite(timestamp_buf, 1, strlen(timestamp_buf), ptr_time);
 
@@ -174,21 +197,26 @@ int main(int argc, char ** argv) {
                 }
 
                 int num_running_thread = 0;
-                for(int i = 0; i < running_check.size(); ++i) {
+                for(size_t i = 0; i < running_check.size(); ++i) {
                     if(running_check[i]) {
                         ++num_running_thread;
                     }
                 }
-                std::cout<<"running thread"<<num_running_thread<<std::endl;
-                std::cout<<data_no<<std::endl;
+                std::cout<<"[INFRARED CAMERA]"<<std::endl;
+                std::cout<<"running thread: "<<num_running_thread<<std::endl;
+                std::cout<<"data no.: "<<data_no<<std::endl;
+
 
                 ++data_no;
             }
         }
+        if(image_show) {
+            cv::imshow("Infrared Image", acquired_image);
+            cv::waitKey(1);
+        }
 
         ros::spinOnce();
         loop_rate.sleep();
-        // ++count;
     }
     return 0;
 }

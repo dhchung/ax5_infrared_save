@@ -3,6 +3,7 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <ros/ros.h>
 
 class Camera{
 public:
@@ -13,7 +14,7 @@ public:
     void print_spinnaker_version();
     bool camera_ready;
 
-    cv::Mat acquire_image();
+    cv::Mat acquire_image(double & time);
     void set_camera();
 
     float min_temp;
