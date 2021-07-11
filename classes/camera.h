@@ -14,7 +14,7 @@ public:
     void print_spinnaker_version();
     bool camera_ready;
 
-    cv::Mat acquire_image(double & time, bool & image_ok);
+    cv::Mat acquire_image(double & time, bool & image_ok, bool & image_show);
     void set_camera();
 
     float min_temp;

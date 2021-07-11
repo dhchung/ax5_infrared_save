@@ -136,13 +136,13 @@ int main(int argc, char ** argv) {
     ros::Subscriber sub_bool = nh.subscribe("/datalogging", 1, dataLoggingFlagCallback);
     ros::Subscriber sub_prefix = nh.subscribe("/save_prefix", 1, dataPrefixCallBack);
 
-    ros::Rate loop_rate(20);
+    ros::Rate loop_rate(10);
     int thread_num = 0;
 
     while(ros::ok()){
         double time;
         bool image_ok;
-        cv::Mat acquired_image =  cam.acquire_image(time, image_ok);
+        cv::Mat acquired_image =  cam.acquire_image(time, image_ok, image_show);
         if(data_logging && image_ok) {
             if(data_prefix.compare(stop_logging_msg)!=0) {
                 char timestamp_buf[256];
@@ -197,10 +197,10 @@ int main(int argc, char ** argv) {
                 ++data_no;
             }
         }
-        if(image_show && image_ok) {
-            cv::imshow("Infrared Image", acquired_image);
-            cv::waitKey(1);
-        }
+        // if(image_show && image_ok) {
+        //     cv::imshow("Infrared Image", acquired_image);
+        //     cv::waitKey(1);
+        // }
 
         ros::spinOnce();
         loop_rate.sleep();

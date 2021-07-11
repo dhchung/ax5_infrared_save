@@ -159,7 +159,7 @@ void Camera::set_camera(){
 }
 
 
-cv::Mat Camera::acquire_image(double & time, bool & image_ok){
+cv::Mat Camera::acquire_image(double & time, bool & image_ok, bool & image_show){
 
     cv::Mat image;
     if(camera_ready){
@@ -177,32 +177,35 @@ cv::Mat Camera::acquire_image(double & time, bool & image_ok){
             const size_t height = img->GetHeight();
             // std::cout<<width<<", "<<height<<std::endl;
             image = cv::Mat(cv::Size(width, height), CV_16UC1, img->GetData());
+            // cv::rotate(image, image, cv::ROTATE_180);
+            cv::Mat image_viz;
+            image.copyTo(image_viz);
             // std::cout<<"before :"<<(image.at<u_int16_t>(width/2, height/2))*0.04 - 273.15<<std::endl;
 
-            for(int i = 0; i < image.rows; ++i) {
-                for(int j = 0; j < image.cols; ++j) {
+            for(int i = 0; i < image_viz.rows; ++i) {
+                for(int j = 0; j < image_viz.cols; ++j) {
                     // Range : -273.15 to 382.17
-                    int pixel_value = int(image.at<u_int16_t>(i,j));
+                    int pixel_value = int(image_viz.at<u_int16_t>(i,j));
 
                     if(pixel_value <= min_pixel) {
-                        image.at<u_int16_t>(i,j) = 0;
+                        image_viz.at<u_int16_t>(i,j) = 0;
                     } else if(pixel_value >= max_pixel) {
-                        image.at<u_int16_t>(i,j) = 16383;
+                        image_viz.at<u_int16_t>(i,j) = 16383;
                     } else {
-                        image.at<u_int16_t>(i,j) = int(float(image.at<u_int16_t>(i,j) - min_pixel) * (16383.0f/float(max_pixel - min_pixel)));
+                        image_viz.at<u_int16_t>(i,j) = int(float(image_viz.at<u_int16_t>(i,j) - min_pixel) * (16383.0f/float(max_pixel - min_pixel)));
                     }
                     // float temp_value = float(pixel_value) * 0.04 - 273.15;
 
-                    image.at<u_int16_t>(i,j) = image.at<u_int16_t>(i,j) * 4;
+                    image_viz.at<u_int16_t>(i,j) = image_viz.at<u_int16_t>(i,j) * 4;
                 }
             }
 
+            if(image_ok && image_show) {
+                // cv::resize(image_viz, image_viz, cv::Size(image_viz.cols*2, image_viz.rows*2));
+                cv::imshow("Infrared", image_viz);
+                cv::waitKey(1);
 
-            // std::cout<<"after :"<<float(image.at<u_int16_t>(width/2, height/2)/4)*cal_ratio + cal_bias<<std::endl;
-
-            // cv::imshow("Infrared", image);
-            // cv::waitKey(1);
-
+            }
         }
     }
     else {
