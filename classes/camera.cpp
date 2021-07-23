@@ -138,17 +138,30 @@ void Camera::set_camera(){
         if(!Spinnaker::GenApi::IsAvailable(node_nuc_mode) ||
            !Spinnaker::GenApi::IsWritable(node_nuc_mode)) {
                std::cout<<"Unable to set NUC mode"<<std::endl;
-        } else {
-            Spinnaker::GenApi::CEnumEntryPtr node_nuc_mode_Manual = 
-                Spinnaker::GenApi::CEnumEntryPtr(node_nuc_mode->GetEntryByName("Manual"));
-            if(!Spinnaker::GenApi::IsAvailable(node_nuc_mode_Manual) ||
-               !Spinnaker::GenApi::IsReadable(node_nuc_mode_Manual)) {
-                std::cout<<"Unable to set NUC mode to manual"<<std::endl;            
+        }
+        // else {
+        //     Spinnaker::GenApi::CEnumEntryPtr node_nuc_mode_Manual = 
+        //         Spinnaker::GenApi::CEnumEntryPtr(node_nuc_mode->GetEntryByName("Manual"));
+        //     if(!Spinnaker::GenApi::IsAvailable(node_nuc_mode_Manual) ||
+        //        !Spinnaker::GenApi::IsReadable(node_nuc_mode_Manual)) {
+        //         std::cout<<"Unable to set NUC mode to manual"<<std::endl;            
+        //     } else {
+        //         node_nuc_mode->SetIntValue(node_nuc_mode_Manual->GetValue());
+        //         std::cout<<"NUC mode set to manual"<<std::endl;
+        //     }
+        // }         
+        else {
+            Spinnaker::GenApi::CEnumEntryPtr node_nuc_mode_Automatic = 
+                Spinnaker::GenApi::CEnumEntryPtr(node_nuc_mode->GetEntryByName("Automatic"));
+            if(!Spinnaker::GenApi::IsAvailable(node_nuc_mode_Automatic) ||
+               !Spinnaker::GenApi::IsReadable(node_nuc_mode_Automatic)) {
+                std::cout<<"Unable to set NUC mode to automatic"<<std::endl;            
             } else {
-                node_nuc_mode->SetIntValue(node_nuc_mode_Manual->GetValue());
-                std::cout<<"NUC mode set to manual"<<std::endl;
+                node_nuc_mode->SetIntValue(node_nuc_mode_Automatic->GetValue());
+                std::cout<<"NUC mode set to automatic"<<std::endl;
             }
-        }         
+        } 
+
 
         camptr->BeginAcquisition();
         camera_ready = true;
